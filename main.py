@@ -6,7 +6,7 @@ from absenteeism_generator import generate_absenteeism_data
 from consolidador import consolidate_excels
 
 def generate_excel_files(files: int = 10):
-    """Gera 10 arquivos Excel com dados de absenteísmo."""
+    """Gera n arquivos Excel com dados de absenteísmo."""
     for i in range(files):
         df = generate_absenteeism_data()
         output_path = os.path.join("data", f"absenteeism_data_{i}.xlsx")
