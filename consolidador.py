@@ -5,11 +5,6 @@ import glob
 def consolidate_excels(input_folder, output_folder, output_file_name):
     """
     Consolida todos os arquivos Excel em uma pasta em um único arquivo Excel.
-    
-    Parâmetros:
-    - input_folder (str): Pasta contendo os arquivos Excel a serem consolidados.
-    - output_folder (str): Pasta onde o arquivo Excel consolidado será salvo.
-    - output_file_name (str): Nome do arquivo Excel de saída consolidado.
     """
     
     # Garantir que a pasta de saída exista
