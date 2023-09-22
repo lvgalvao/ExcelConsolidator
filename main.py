@@ -1,24 +1,39 @@
-# main.py
-
-import os
 import pandas as pd
-from absenteeism_generator import generate_absenteeism_data
-from consolidador import consolidate_excels
+import os
+import glob
+from faker import Faker
+import random
 
-def generate_excel_files(files: int = 10):
-    """Gera n arquivos Excel com dados de absenteísmo."""
-    for i in range(files):
-        df = generate_absenteeism_data()
-        output_path = os.path.join("data", f"absenteeism_data_{i}.xlsx")
-        df.to_excel(output_path, index=False, engine='openpyxl')
+faker = Faker("pt_BR")
 
-def consolidate_files():
-    """Consolida os arquivos Excel gerados em um único arquivo."""
-    input_folder = "data"
-    output_folder = "consolidado"
-    output_file_name = "consolidated_absenteeism_data.xlsx"
-    consolidate_excels(input_folder, output_folder, output_file_name)
+departments = ["Recursos Humanos", "Financeiro", "Marketing", "TI", "Vendas", "Operações", "Jurídico", "Engenharia", "Atendimento ao Cliente", "P&D"]
+reasons = ["Doença", "Problemas pessoais", "Consulta médica", "Viagem de negócios", "Outros"]
 
-if __name__ == "__main__":
-    generate_excel_files(50)
-    consolidate_files()
+if not os.path.exists("data"):
+    os.makedirs("data")
+
+for i in range(50):
+    data = {
+        "Colaborador_id": [faker.unique.random_number(digits=5) for _ in range(10)],
+        "Colaborador_nome": [faker.name() for _ in range(10)],
+        "Departamento": [faker.random_element(elements=departments) for _ in range(10)],
+        "Motivo_da_ausência": [faker.random_element(elements=reasons) for _ in range(10)],
+        "Horas_de_ausência": [faker.random_int(min=1, max=8) for _ in range(10)],
+        "Data_da_ausência": [faker.date_between_dates(date_start=pd.to_datetime("2023-06-01"), date_end=pd.to_datetime("2023-06-30")) for _ in range(10)],
+        "Salário": [round(random.uniform(2500, 12500), 2) for _ in range(10)]
+    }
+
+    df = pd.DataFrame(data)
+    df['Data_da_ausência'] = pd.to_datetime(df['Data_da_ausência'])
+    
+    output_path = os.path.join("data", f"absenteeism_data_{i}.xlsx")
+    df.to_excel(output_path, index=False, engine='openpyxl')
+
+if not os.path.exists("consolidado"):
+    os.makedirs("consolidado")
+
+files = glob.glob(os.path.join("data", "*.xlsx"))
+all_data = [pd.read_excel(file, engine='openpyxl') for file in files]
+
+consolidated_df = pd.concat(all_data, axis=0, ignore_index=True)
+consolidated_df.to_excel(os.path.join("consolidado", "consolidated_absenteeism_data.xlsx"), index=False, engine='openpyxl')
