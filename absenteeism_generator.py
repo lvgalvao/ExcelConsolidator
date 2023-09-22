@@ -21,6 +21,6 @@ def generate_absenteeism_data():
     }
 
     df = pd.DataFrame(data)
-    df['absence_date'] = pd.to_datetime(df['absence_date'])
+    df['Data_da_ausência'] = pd.to_datetime(df['Data_da_ausência'])
 
     return df
